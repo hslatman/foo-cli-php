@@ -1,0 +1,38 @@
+#!/usr/bin/env php
+<?php
+
+require __DIR__.'/../vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+use Symfony\Component\Debug\Debug;
+use Symfony\Component\Console\Input\ArgvInput;
+
+use App\AppKernel;
+
+set_time_limit(0);
+
+if (!class_exists(Application::class)) {
+    throw new \RuntimeException('You need to add "symfony/framework-bundle" as a Composer dependency.');
+}
+
+$input = new ArgvInput();
+$env = $input->getParameterOption(['--env', '-e'], $_SERVER['APP_ENV'] ?? 'dev');
+$debug = ($_SERVER['APP_DEBUG'] ?? ('prod' !== $env)) && !$input->hasParameterOption(['--no-debug', '']);
+
+if ($debug) {
+    umask(0000);
+
+    if (class_exists(Debug::class)) {
+        Debug::enable();
+    }
+}
+
+$kernel = new AppKernel($env, $debug);
+$kernel->boot();
+
+$container = $kernel->getContainer();
+$application = $container->get(Application::class);
+$application->setVersion('0.0.1');
+$application->setName('Foo CLI');
+
+$application->run();
