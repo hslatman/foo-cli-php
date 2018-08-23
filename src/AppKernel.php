@@ -30,9 +30,9 @@ final class AppKernel extends Kernel
         $loader->load(__DIR__ . '/../config/services.yml');
     }
 
-    protected function build(ContainerBuilder $containerBuilder): void
+    protected function build(ContainerBuilder $builder): void
     {
-        $containerBuilder->addCompilerPass(new CollectCommandsCompilerPass());
+        $builder->addCompilerPass(new CollectCommandsCompilerPass());
     }
 
     public function getCacheDir()
